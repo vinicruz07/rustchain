@@ -44,14 +44,14 @@ impl BlockHeader {
 
     /// Funcao que serializa o header do bloco e calcula o hash
     /// 1. Inicializa o estado interno do hasher SHA-256
-    /// 2. Alimenta o hasher em Little-Endian para garantir um hash determinístico cross-platform (x86, ARM, ESP32)
+    /// 2. Alimenta o hasher em big-endian para garantir um hash determinístico cross-platform (x86, ARM, ESP32)
     /// 3. Finaliza a computação e converte o resultado no tipo `Hash` ([u8; 32])
     pub fn calc_hash(&self) -> Hash {
         
         // 1. Inicializa o estado interno do hasher SHA-256
         let mut hasher = Sha256::new();
 
-        // 2. Alimenta o hasher garantindo um hash determinístico cross-platform (x86, ARM, ESP32)
+        // 2. Alimenta o hasher em big-endian para garantir um hash determinístico cross-platform (x86, ARM, ESP32)
         hasher.update(self.index.to_be_bytes());
         hasher.update(self.timestamp.to_be_bytes());
         hasher.update(&self.prev_hash);
@@ -60,5 +60,15 @@ impl BlockHeader {
 
         // 3. Finaliza a computação e converte o resultado no tipo `Hash` ([u8; 32])
         hasher.finalize().into()
+    }
+
+    /// Funcao que verifica se o hash do cabecalho e valido
+    /// A dificuldade é definida pelo target
+    /// Para ser valido, o hash deve ser menor que o target (ter mais zeros à esquerda)
+    pub fn valid(&self, target: &Hash) -> bool {
+        let hash = self.calc_hash();
+
+        // Verifica se o hash é menor que o target (tem mais zeros à esquerda)
+        &hash < target;
     }
 }
