@@ -1,0 +1,10 @@
+[package]
+name = "node-no-std"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Full Node da blockchain em bare-metal no_std para ESP32"
+
+[dependencies]
+blockchain-core = { path = "../core", default-features = false }
