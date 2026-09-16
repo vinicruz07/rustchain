@@ -1,5 +1,5 @@
-/// Módulo core responsável pelas estruturas de dados do blockchain
-/// Escrito em no_std para rodar bare metal
+//! Módulo core responsável pelas estruturas de dados do blockchain
+//! Escrito em no_std para rodar bare metal
 #![no_std]
 
 /// Dependencias externas
@@ -69,6 +69,6 @@ impl BlockHeader {
         let hash = self.calc_hash();
 
         // Verifica se o hash é menor que o target (tem mais zeros à esquerda)
-        &hash < target;
+        &hash < target
     }
 }
