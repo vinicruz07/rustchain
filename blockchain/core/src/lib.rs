@@ -82,7 +82,6 @@ pub const BLOCKTIME: u64 = 60;
 /// Tempo esperado para uma janela completa (BLOCKINTERVAL * BLOCKTIME)
 pub const EXPECTEDTIME: u64 = (BLOCKINTERVAL as u64) * BLOCKTIME;
 
-
 /// Calcula o novo target com base no tempo decorrido na janela de blocos
 ///
 /// * `current_target` - Target atual
@@ -92,6 +91,24 @@ pub fn calc_target(current_target: &Hash, actual_time: u64) -> Hash {
     // 1. Limita a variação em quatro vezes para evitar flutuações extremas
     // A variação do target deve estar entre 1/4 e 4 vezes o tempo esperado
     let clamped_time = actual_time.clamp(
-        
-    )
+        EXPECTEDTIME / 4,
+        EXPECTEDTIME * 4,
+    );
+
+    // 2. Copia os 16 primeiros bytes para um buffer
+    let mut hbuf = [0u8; 16];
+    hbuf.copy_from_slice(&current_target[..16]);
+    let hbytes = u128::from_be_bytes(hbuf);
+
+    // 3. Aplica a proporção de correção
+    let ajuste = (hbytes * clamped_time as u128) / (EXPECTEDTIME as u128);
+
+    // 4. Atualiza os bytes mais significativos do target
+    let mut novo_target = *current_target;
+    if ajuste > 0 {
+        novo_target[..16].copy_from_slice(&ajuste.to_be_bytes());
+    }
+
+    // 5. Retorna o novo target
+    novo_target
 }
