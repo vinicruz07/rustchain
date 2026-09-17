@@ -72,3 +72,26 @@ impl BlockHeader {
         &hash < target
     }
 }
+
+/// Intervalo em blocos para recalcular a dificuldade
+pub const BLOCKINTERVAL: u32 = 10;
+
+/// Tempo esperado para calcular um bloco (em segundos)
+pub const BLOCKTIME: u64 = 60;
+
+/// Tempo esperado para uma janela completa (BLOCKINTERVAL * BLOCKTIME)
+pub const EXPECTEDTIME: u64 = (BLOCKINTERVAL as u64) * BLOCKTIME;
+
+
+/// Calcula o novo target com base no tempo decorrido na janela de blocos
+///
+/// * `current_target` - Target atual
+/// * `actual_time` - Tempo decorrido na janela de blocos
+pub fn calc_target(current_target: &Hash, actual_time: u64) -> Hash {
+    
+    // 1. Limita a variação em quatro vezes para evitar flutuações extremas
+    // A variação do target deve estar entre 1/4 e 4 vezes o tempo esperado
+    let clamped_time = actual_time.clamp(
+        
+    )
+}
